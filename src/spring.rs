@@ -3,6 +3,7 @@ use std::ops::Mul;
 use nannou::{prelude::*};
 use crate::point::Point;
 
+#[derive(Debug)]
 pub struct Spring{
     pub point1: Point,
     pub point2: Point,
