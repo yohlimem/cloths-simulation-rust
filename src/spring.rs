@@ -12,18 +12,12 @@ pub struct Spring{
 }
 
 impl Spring{
-    pub fn update(&mut self){
+    pub fn update(&mut self) -> Vec2{
         let dir:Vec2 = self.point1.pos - self.point2.pos;
         self.distance = dir.length() - self.rest_length;
         let force = dir.normalize().mul(self.distance * -self.stiffness);
-        println!("force: {}, dir: {}, length {}, point1: {:?}, point2: {:?}", force, dir, self.distance, self.point1.pos, self.point2.pos);
 
-
-        self.point1.force += force;
-        self.point2.force += -force;
-
-        // gravity
-        self.point1.velocity.y += -8.9;
-        self.point2.velocity.y += -8.9;
+        return force;
+        // println!("force: {}, dir: {}, length {}, point1: {:?}, point2: {:?}", force, dir, self.distance, self.point1.pos, self.point2.pos);
     }
 }
