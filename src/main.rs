@@ -1,3 +1,4 @@
+use std::borrow::BorrowMut;
 use std::time::Instant;
 
 use nannou::prelude::*;
@@ -149,9 +150,25 @@ fn update(app: &App, model: &mut Model, _update: Update) {
     model.last_time = Instant::now();
 
     if app.mouse.buttons.left().is_down() {
-        model.point_vec.last_mut().unwrap().pos = app.mouse.position();
-        model.point_vec.last_mut().unwrap().velocity = Vec2::ZERO;
-        model.point_vec.last_mut().unwrap().force = Vec2::ZERO;
+        let mut closest: f32 = f32::MAX;
+        let mut closest_point_i:usize = 0;
+        let mut drag_point:&mut Point;
+        for point in 0..model.point_vec.len() {
+            let dist = app.mouse.position().distance(model.point_vec[point].pos);
+
+            if dist < closest {
+                closest = dist;
+                closest_point_i = point.clone();
+            }
+        }
+
+        drag_point = &mut model.point_vec[closest_point_i];
+        drag_point.pos = app.mouse.position();
+        
+        // closest_point.pos = app.mouse.position();
+        // model.point_vec.last_mut().unwrap().pos = app.mouse.position();
+        // model.point_vec.last_mut().unwrap().velocity = Vec2::ZERO;
+        // model.point_vec.last_mut().unwrap().force = Vec2::ZERO;
     }
     for i in 0..model.spring_vec.len() {
         let force = model.spring_vec[i].update();
