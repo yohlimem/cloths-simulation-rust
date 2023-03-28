@@ -13,12 +13,12 @@ pub struct Spring{
 }
 
 impl Spring{
-    pub fn update(&mut self) -> Vec2{
-        let dir:Vec2 = self.point1.pos - self.point2.pos;
-        self.distance = dir.length() - self.rest_length;
-        let force = dir.normalize().mul(self.distance * -self.stiffness);
+    pub fn update(rest_length: f32, point1:Point, point2: Point) -> Vec2{
+        let dir:Vec2 = (point2.pos - point1.pos).normalize();
+        let delta_d = (point1.pos).distance(point2.pos) - rest_length;
+        
 
-        return force;
+        return delta_d * dir / 2.0;
         // println!("force: {}, dir: {}, length {}, point1: {:?}, point2: {:?}", force, dir, self.distance, self.point1.pos, self.point2.pos);
     }
 }
