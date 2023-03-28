@@ -79,22 +79,33 @@ fn update(app: &App, model: &mut Model, _update: Update) {
     if app.mouse.buttons.left().is_down() {
         model.point_vec[model.last_point].pos = app.mouse.position();
     }
-    for _ in 0..20{
+    for _ in 0..50{
         for i in 0..model.point_vec.len(){
             for j in OFFSETS{
                 if i as i32 + j >= model.point_vec.len() as i32 || i as i32 + j < 0 || (j == -1 && (model.point_vec[i].id - 1) as i32 % HOW_MANY == 0) {
-                    
-                    // println!("(model.point_vec[i].id - 1) as i32 % HOW_MANY: {}, id: {},",(model.point_vec[i].id - 1) as i32 % HOW_MANY, model.point_vec[i].id - 1);
                     continue;
                 }
                 let index = i as i32 + j;
-                let point1 = model.point_vec[index as usize];
+                // let point1_pos = model.point_vec[i].pos;
                 let point2 = model.point_vec[i];
+                let point1 = model.point_vec[index as usize];
                 let new_pos = Spring::update(REST ,point1, point2);
-                model.point_vec[index as usize].velocity = new_pos / dt as f32;
-                model.point_vec[i].velocity = -new_pos / dt as f32;
-                model.point_vec[index as usize].update(dt as f64);
-                model.point_vec[i].update(dt as f64);
+                if!model.point_vec[index as usize].is_kinematic {
+                    model.point_vec[index as usize].pos += new_pos;
+
+                }
+                if !model.point_vec[i].is_kinematic{
+                    model.point_vec[i].pos += -new_pos;
+                }
+                // if model.point_vec[i].is_kinematic {
+                //     model.point_vec[i].pos = point1_pos;
+                // }
+
+                // model.point_vec[index as usize].update(dt as f64);
+                // model.point_vec[i].update(dt as f64);
+                // model.point_vec[index as usize].velocity = new_pos / dt as f32;
+                // model.point_vec[i].velocity = -new_pos / dt as f32;
+                // model.point_vec[index as usize].update(dt as f64);
                 // model.point_vec[i].update(dt as f64);
                 
             }
@@ -124,7 +135,7 @@ fn update(app: &App, model: &mut Model, _update: Update) {
     model.point_vec[index2].update(dt as f64);
     model.spring_vec[i].point1 = model.point_vec[index1];
     model.spring_vec[i].point2 = model.point_vec[index2];
-}
+    }
 }
 
 fn view(app: &App, model: &Model, frame: Frame) {
@@ -196,7 +207,7 @@ fn create_grid() -> (Vec<Spring>, Vec<Point>){
     }
     for i in 0..point_vec.len() {
         // up
-        if (i as i32 - HOW_MANY) > 0 {
+        if (i as i32 - HOW_MANY) >= 0 {
             spring_vec.push(Spring {
                 point1: point_vec[i],
                 point2: point_vec[i - HOW_MANY as usize],

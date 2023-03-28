@@ -44,7 +44,7 @@ impl Point {
         let future_acceleration = self.velocity - self.prev_vel;
         // https://en.wikipedia.org/wiki/Verlet_integration#Algorithmic_representation
         self.pos = self.pos + self.velocity * dt as f32 + self.force * (dt * dt * 0.5) as f32;
-        self.velocity = self.velocity + (self.force+future_acceleration) * (dt*0.5) as f32;
+        self.velocity = (self.velocity + (self.force+future_acceleration) * (dt*0.5) as f32).clamp_length(0.0001, 100.0);
         self.prev_vel = prev_pos;
     }
     // pub fn from(pos: Vec2, velocity: Vec2,force: Vec2,is_kinematic: bool, id: u32) -> Point{
@@ -61,6 +61,6 @@ impl Point {
         self.velocity = self.velocity.mul(0.99);
     }
     pub fn gravity(&mut self, dt: f64) {
-        self.force.y = -50.0;
+        self.force.y = -100.0;
     }
 }
